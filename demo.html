@@ -1,0 +1,151 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do App</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        h1, h2, h3, h4 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: black;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: calc(100% - 22px);
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .task {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .subtask {
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 2px solid #007bff;
+            margin-bottom: 10px;
+        }
+
+        .complete {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .task-actions {
+            margin-top: 10px;
+        }
+
+        .task-actions button {
+            margin-right: 10px;
+        }
+
+        .add-subtask-form {
+            margin-top: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Things to Do !!!</h1>
+    
+    <h2>Add Task</h2>
+    <form action="{{ url_for('add_task') }}" method="post">
+        <input type="text" name="content" placeholder="Enter task content" required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    {% for task in tasks %}
+        <div class="task">
+            <h3 class="{% if task.completed %} complete {% endif %}">{{ task.content }}</h3>
+            <div class="task-actions">
+                <form action="{{ url_for('delete_task', id=task.id) }}" method="post" style="display: inline;">
+                    <button type="submit">Delete</button>
+                </form>
+                {% if not task.completed %}
+                    <form action="{{ url_for('complete_task', id=task.id) }}" method="post" style="display: inline;">
+                        <button type="submit">Complete</button>
+                    </form>
+                {% else %}
+                    <form action="{{ url_for('incomplete_task', id=task.id) }}" method="post" style="display: inline;">
+                        <button type="submit">Incomplete</button>
+                    </form>
+                {% endif %}
+            </div>
+            <h4>Subtasks:</h4>
+            <ul>
+                {% for subtask in task.subtasks %}
+                    <li class="subtask">
+                        <span class="{% if subtask.completed %} complete {% endif %}">{{ subtask.content }}</span>
+                        <div class="task-actions">
+                            <form action="{{ url_for('delete_subtask', subtask_id=subtask.id) }}" method="post" style="display: inline;">
+                                <button type="submit">Delete</button>
+                            </form>
+                            {% if not subtask.completed %}
+                                <form action="{{ url_for('complete_subtask', subtask_id=subtask.id) }}" method="post" style="display: inline;">
+                                    <button type="submit">Complete</button>
+                                </form>
+                            {% else %}
+                                <form action="{{ url_for('incomplete_subtask', subtask_id=subtask.id) }}" method="post" style="display: inline;">
+                                    <button type="submit">Incomplete</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="add-subtask-form">
+                <form action="{{ url_for('add_subtask', task_id=task.id) }}" method="post">
+                    <input type="text" name="content" placeholder="Enter subtask content" required>
+                    <button type="submit">Add Subtask</button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+</body>
+</html> {% endcomment %}

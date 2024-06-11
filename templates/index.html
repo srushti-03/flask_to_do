@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do App</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: black;
+        }
+
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #5cb85c;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #4cae4c;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: grey;
+        }
+
+        .subtask {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>To Do List</h1>
+    <form action="{{ url_for('add_task') }}" method="post">
+        <input type="text" name="content" placeholder="Enter your task">
+        <button type="submit">Add Task</button>
+    </form>
+    <ul>
+        {% for task in tasks %}
+        <li class="{% if task.completed %}completed{% endif %}">
+            <span>{{ task.content }}</span>
+            <form action="{{ url_for('complete_task', id=task.id) }}" method="post" style="display:inline;">
+                <button type="submit">Complete</button>
+            </form>
+            <form action="{{ url_for('incomplete_task', id=task.id) }}" method="post" style="display:inline;">
+                <button type="submit">Incomplete</button>
+            </form>
+            <form action="{{ url_for('delete_task', id=task.id) }}" method="post" style="display:inline;">
+                <button type="submit">Delete</button>
+            </form>
+            <form action="{{ url_for('add_subtask', task_id=task.id) }}" method="post">
+                <input type="text" name="content" placeholder="Add subtask">
+                <button type="submit">Add Subtask</button>
+            </form>
+            <ul class="subtask">
+                {% for subtask in task.subtasks %}
+                <li class="{% if subtask.completed %}completed{% endif %}">
+                    <span>{{ subtask.content }}</span>
+                    <form action="{{ url_for('complete_subtask', subtask_id=subtask.id) }}" method="post" style="display:inline;">
+                        <button type="submit">Complete</button>
+                    </form>
+                    <form action="{{ url_for('incomplete_subtask', subtask_id=subtask.id) }}" method="post" style="display:inline;">
+                        <button type="submit">Incomplete</button>
+                    </form>
+                    <form action="{{ url_for('delete_subtask', subtask_id=subtask.id) }}" method="post" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
